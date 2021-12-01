@@ -81,4 +81,26 @@ public class Rotate {
         return dp[n - 1][0];
     }
 
+    /**
+     * 贪心算法
+     *
+     * @param prices
+     * @return
+     */
+    public int maxProfit3(int[] prices) {
+        int len = prices.length;
+        if (len < 2) {
+            return 0;
+        }
+        int res = 0;
+        //i表示第几天，从第0天开始
+        for (int i = 1; i < len; i++) {
+            //上一天买入，当天卖出
+            int diff = prices[i] - prices[i - 1];
+            if (diff > 0) {
+                res += diff;
+            }
+        }
+        return res;
+    }
 }
