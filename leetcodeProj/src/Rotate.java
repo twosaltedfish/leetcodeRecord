@@ -1,106 +1,85 @@
+import java.util.Arrays;
+
 /**
- * @Description 旋转数组 url:https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x2skh7/
+ * @Description 旋转数组:https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x2skh7/
  * @Author Lce
  * @Create 2021-12-01
  */
 public class Rotate {
-
-    public int profit;
-
+    /*
+        给你一个数组，将数组中的元素向右轮转 k 个位置，其中 k 是非负数。
+     */
     public static void main(String[] args) {
-
+        int[] nums = {1, 2, 3, 4, 5, 6, 7};
+        int k = 3;
+//        routate1(nums, k);
+        System.out.println(6 % 2);
+        routate2(nums, k);
+        System.out.println(Arrays.toString(nums));
     }
 
+    /*
+        用
+        向右移(i+k)%length长度
+     */
+
     /**
-     * 暴力算法（递归，如果数据过大会堆栈溢出）
+     * 用额外数组空间存放
      *
-     * @param prices
-     * @return
+     * @param nums
+     * @param k
      */
-    public int maxProfit(int[] prices) {
-        int len = prices.length;
-        //数组长度不足2时收益为0
-        if (len < 2) {
-            return 0;
+    public static void routate1(int[] nums, int k) {
+        int length = nums.length;
+        int[] newNums = new int[length];
+        for (int i = 0; i < nums.length; i++) {
+            newNums[(i + k) % length] = nums[i];
         }
-        this.profit = 0;
-        maxProfit(prices, 0, len, 0, profit);
-        return 0;
+        System.arraycopy(newNums, 0, nums, 0, length);
     }
 
     /**
-     * @param prices 价格数组
-     * @param index  表示天数
-     * @param len    数组长度
-     * @param status 0-持有，1-不持有
-     * @param profit 当前收益
+     * 不用额外数组空间存放，直接操作数组
+     *
+     * @param nums
+     * @param k
      */
-    private void maxProfit(int[] prices, int index, int len, int status, int profit) {
-        if (index == len) {
-            //代表最后一天
-            this.profit = Math.max(this.profit, profit);
+    public static void routate2(int[] nums, int k) {
+        int length = nums.length;
+        //循环次数
+        int n = length;
+        //原点（当k是长度的因子时做判断）
+        int i = 0;
+        //起始位置
+        int pos = 0;
+        //起始覆盖元素
+        int pre = nums[pos];
+        //缓存值
+        int temp = nums[pos];
+        //当n为k值的因子时，即能除尽，没有余数，代表平移k/n圈，回到原来的位置，可以直接返回
+        if (k % n == 0) {
             return;
         }
-        //与前一天状态相同时
-        maxProfit(prices, index + 1, len, status, profit);
-        //与前一天状态不同时
-        if (status == 0) {
-            //不持有->持有，买入操作，收益为当前收益-当天买入价格
-            maxProfit(prices, index + 1, len, 1, profit - prices[index]);
-        }
-        if (status == 1) {
-            //持有->不持有，卖出操作,收益为当前收益+当天卖出价格
-            maxProfit(prices, index + 1, len, 0, profit + prices[index]);
-        }
-    }
-
-    /**
-     * 动态规划
-     *
-     * @param prices
-     * @return
-     */
-    public int maxProfit2(int[] prices) {
-        int n = prices.length;
-        int[][] dp = new int[n][2];
-        /*
-            dp[i][0]:表示第i天不持有的最大收益，dp[i][1]:表示第i天持有的最大收益
-         */
-        dp[0][0] = 0;
-        dp[0][1] = -prices[0];
-        //i表示第几天,第0天已有数据，则从第一天开始
-        for (int i = 1; i < n; i++) {
-            //当天选择不持有时：前一天的状态若为不持有，则收益不变，若前一天状态为持有，则为卖出操作，选取两种情况中的最大值
-            dp[i][0] = Math.max(dp[i - 1][0], dp[i - 1][1] + prices[i]);
-            //当天选择持有时：前一天的状态若为持有，则收益不变，若前一天状态为不持有，则为买入操作，选取两种情况中的最大值
-            dp[i][0] = Math.max(dp[i - 1][1], dp[i - 1][0] - prices[i]);
-        }
-        /*
-           最后一天有恒定dp[n-1][0]>dp[n-1][1]，不持有最大收益必大于持有最大收益，则直接返回dp[n-1][0]
-         */
-        return dp[n - 1][0];
-    }
-
-    /**
-     * 贪心算法
-     *
-     * @param prices
-     * @return
-     */
-    public int maxProfit3(int[] prices) {
-        int len = prices.length;
-        if (len < 2) {
-            return 0;
-        }
-        int res = 0;
-        //i表示第几天，从第0天开始
-        for (int i = 1; i < len; i++) {
-            //上一天买入，当天卖出
-            int diff = prices[i] - prices[i - 1];
-            if (diff > 0) {
-                res += diff;
+        while (n-- != 0) {
+            //移动距离
+            pos = (pos + k) % length;
+            //保存被覆盖元素
+            temp = nums[pos];
+            //保存覆盖元素
+            nums[pos] = pre;
+            //保存被覆盖元素到覆盖元素原来位置
+            pre = temp;
+            //相等的时候就表面移动nk后回到原点，证明k是n的因子，则会出现数组有元素没有平移，需要将原点设置后一位进行平移
+            if (pos == i) {
+                //原点设为i+1
+                pos = ++i;
+                //起始覆盖元素
+                pre = nums[pos];
             }
         }
-        return res;
+
+
     }
+
+
 }
