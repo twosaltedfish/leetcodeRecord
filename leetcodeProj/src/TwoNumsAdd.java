@@ -25,8 +25,8 @@ public class TwoNumsAdd {
             int n2 = l2 == null ? 0 : l2.val;
             int sum = n1 + n2 + carry;
             //和相除就是进位值
-            carry=sum/10;
-            //求余（进位）
+            carry = sum / 10;
+            //和求余就是val（去掉进位）
             temp.val = sum % 10;
             l1 = l1 == null ? null : l1.next;
             l2 = l2 == null ? null : l2.next;
@@ -35,10 +35,9 @@ public class TwoNumsAdd {
             }
         }
         //计算之后若果最后进位为1，则当前链表最后一个数为1
-        if (carry == 1) {
-            temp = temp.next = new ListNode(1);
+        if (carry > 0) {
+            temp.next = new ListNode(carry);
         }
-        temp.next = null;
         return node;
     }
 }
