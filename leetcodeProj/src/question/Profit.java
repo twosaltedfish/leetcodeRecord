@@ -1,3 +1,5 @@
+package question;
+
 /**
  * @Description 股票收益问题:https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x2zsx1/
  * @Author Lce

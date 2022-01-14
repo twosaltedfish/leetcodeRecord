@@ -1,3 +1,5 @@
+package question;
+
 /**
  * @Description 只出现一次的数字：https://leetcode-cn.com/leetbook/read/top-interview-questions-easy/x21ib6/
  * @Author Lce
