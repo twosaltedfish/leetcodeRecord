@@ -11,7 +11,7 @@ package question;
 public class LongestPalindrome {
     public static void main(String[] args) {
         String s = "cbbd";
-        System.out.println(longestPalindrome1(s));
+        System.out.println(test(s));
     }
 
     /**
@@ -44,6 +44,9 @@ public class LongestPalindrome {
 
     /**
      * 动态规划
+     * 思路：利用dpTable，设i为字符串头索引，j为尾索引，dp[i][j]表示这个字符串是否是回文串，用true/false表示
+     * 一个回文串头尾去掉，如果还有字符剩余，则一定为回文串，则状态转移方程为dp[i][j]=dp[i+1][j-1]，
+     * 首先可以确定的是
      *
      * @param s
      * @return
@@ -75,14 +78,12 @@ public class LongestPalindrome {
                 if (j >= len) {
                     break;
                 }
-                //当前字符串长度
-                int nowLen = j - i + 1;
                 //头尾字符不相等，就一定不是回文串
                 if (charArray[i] != charArray[j]) {
                     dp[i][j] = false;
                 } else {
                     //长度<=3，代表中间夹着一个或者两个相同的，为回文串
-                    if (nowLen <= 3) {
+                    if (length <= 3) {
                         dp[i][j] = true;
                     } else {
                         dp[i][j] = dp[i + 1][j - 1];
@@ -90,12 +91,50 @@ public class LongestPalindrome {
                 }
 
                 // 只要 dp[i][j] == true 成立，就表示子串 s[i..L] 是回文，此时记录回文长度和起始位置
-                if (dp[i][j] && nowLen > maxLen) {
-                    maxLen = nowLen;
+                if (dp[i][j] && length > maxLen) {
+                    maxLen = length;
                     begin = i;
                 }
             }
         }
         return s.substring(begin, begin + maxLen);
+    }
+
+    public static String test(String s) {
+        int len = s.length();
+        //边界值，直接返回
+        if (len < 2) {
+            return s;
+        }
+        int maxLength = 0;
+        String maxString = s.substring(0, 1);
+        boolean[][] dp = new boolean[len][len];
+        for (int i = 0; i < len; i++) {
+            dp[i][i] = true;
+        }
+        for (int l = 2; l <= len; l++) {
+            for (int i = 0; i < len; i++) {
+                int j = l + i - 1;
+                if (j >= len) {
+                    break;
+                }
+                if (s.charAt(i) != s.charAt(j)) {
+                    dp[i][j] = false;
+                } else {
+                    //头尾相同，长度小于等于3，代表中间有一个数或者两个相同数
+                    if (l <= 3) {
+                        dp[i][j] = true;
+                    } else {
+                        //头尾相同，如果里面为回文字符串则外面也为字符串
+                        dp[i][j] = dp[i + 1][j - 1];
+                    }
+                    if (dp[i][j] && l > maxLength) {
+                        maxLength = l;
+                        maxString = s.substring(i, j + 1);
+                    }
+                }
+            }
+        }
+        return maxString;
     }
 }
